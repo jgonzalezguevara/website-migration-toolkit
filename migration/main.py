@@ -4,6 +4,9 @@ from pathlib import Path
 from migration.config import MigrationConfig
 from migration.core.discover import discover
 from migration.core.inventory import build_inventory
+from migration.core.validate import run_validation
+from migration.reporting.csv import write_csv
+from migration.reporting.markdown import write_validation_markdown
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -46,6 +49,32 @@ def build_parser() -> argparse.ArgumentParser:
     inventory_parser = commands.add_parser(
         "inventory",
         help="Genera el inventario de archivos del sitio.",
+    )
+
+    validate_parser = commands.add_parser(
+        "validate",
+        help="Valida enlaces y genera incidencias.",
+    )
+
+    validate_parser.add_argument(
+        "--source",
+        type=Path,
+        required=True,
+        help="Directorio raíz del sitio.",
+    )
+
+    validate_parser.add_argument(
+        "--output",
+        type=Path,
+        required=True,
+        help="Directorio de salida.",
+    )
+
+    validate_parser.add_argument(
+        "--domain",
+        action="append",
+        default=[],
+        help="Dominio permitido.",
     )
 
     inventory_parser.add_argument(
@@ -104,6 +133,40 @@ def main() -> int:
 
         print(f"Archivos: {len(items)}")
         print(f"Salida: {args.output / 'inventory.csv'}")
+
+        return 0
+
+    if args.command == "validate":
+        config = MigrationConfig(
+            source=args.source,
+            output=args.output,
+            reports=args.output,
+            allowed_domains=args.domain,
+        )
+
+        pages, links, resources = discover(config)
+
+        issues = run_validation(
+            pages,
+            links,
+            resources,
+            config.source,
+        )
+
+        write_csv(
+            args.output / "validation.csv",
+            issues,
+        )
+
+        write_validation_markdown(
+            args.output / "validation.md",
+            issues,
+        )
+
+        print(f"Páginas: {len(pages)}")
+        print(f"Enlaces: {len(links)}")
+        print(f"Recursos: {len(resources)}")
+        print(f"Incidencias: {len(issues)}")
 
         return 0
 

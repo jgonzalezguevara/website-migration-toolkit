@@ -1,7 +1,7 @@
 from migration.models.validation import ValidationIssue
 
 
-def validate(pages, links, resources):
+def validate(pages, links, resources, source_root=None):
     issues = []
     seen = set()
 
