@@ -9,6 +9,10 @@ class Page:
     size: int
     empty: bool
     appears_404: bool
+    meta_description: str = ""
+    h1_count: int = 0
+    canonical: str = ""
+    robots: str = ""
 
     def to_dict(self) -> dict:
         return asdict(self)

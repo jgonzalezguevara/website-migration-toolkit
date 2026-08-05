@@ -47,6 +47,53 @@ def parse_html_file(
         or "PAGE NOT FOUND" in text.upper()
     )
 
+    meta_description = ""
+
+    meta = soup.find(
+        "meta",
+        attrs={"name": "description"},
+    )
+
+    if meta:
+        meta_description = (
+            meta.get("content", "")
+            .strip()
+        )
+
+    h1_count = len(
+        soup.find_all("h1")
+    )
+
+    canonical = ""
+
+    canonical_tag = soup.find(
+        "link",
+        attrs={"rel": "canonical"},
+    )
+
+    if canonical_tag:
+        canonical = (
+            canonical_tag.get(
+                "href",
+                "",
+            ).strip()
+        )
+
+    robots = ""
+
+    robots_tag = soup.find(
+        "meta",
+        attrs={"name": "robots"},
+    )
+
+    if robots_tag:
+        robots = (
+            robots_tag.get(
+                "content",
+                "",
+            ).strip()
+        )
+
     page = Page(
         file=str(relative),
         inferred_route=normalize_route(
@@ -57,6 +104,10 @@ def parse_html_file(
         size=file.stat().st_size,
         empty=file.stat().st_size == 0,
         appears_404=appears_404,
+        meta_description=meta_description,
+        h1_count=h1_count,
+        canonical=canonical,
+        robots=robots,
     )
 
     links = []
