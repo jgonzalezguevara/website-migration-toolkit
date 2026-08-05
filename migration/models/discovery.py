@@ -34,6 +34,9 @@ class Resource:
     source_file: str
     type: str
     value: str
+    alt: str = ""
+    width: str = ""
+    height: str = ""
 
     def to_dict(self) -> dict:
         return asdict(self)

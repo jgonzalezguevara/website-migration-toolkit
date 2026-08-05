@@ -151,6 +151,18 @@ def parse_html_file(
                         attribute,
                         "",
                     ),
+                    alt=node.get(
+                        "alt",
+                        "",
+                    ),
+                    width=node.get(
+                        "width",
+                        "",
+                    ),
+                    height=node.get(
+                        "height",
+                        "",
+                    ),
                 )
             )
 
