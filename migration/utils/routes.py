@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 def normalize_route(
     value: str,
     allowed_domains: list[str] | None = None,
+    source_file: str | None = None,
 ) -> str | None:
 
     if not value:
@@ -33,6 +34,20 @@ def normalize_route(
             return None
 
     route = parsed.path or "/"
+
+    if (
+        source_file
+        and not parsed.netloc
+        and parsed.path
+        and not parsed.path.startswith("/")
+    ):
+        base = posixpath.dirname(
+            "/" + source_file
+        )
+        route = posixpath.join(
+            base,
+            parsed.path,
+        )
 
     if not route.startswith("/"):
         route = "/" + route

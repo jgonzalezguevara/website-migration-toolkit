@@ -71,6 +71,7 @@ def parse_html_file(
                 normalized_route=normalize_route(
                     href,
                     allowed_domains,
+                    str(relative),
                 ),
                 text=node.get_text(
                     " ",

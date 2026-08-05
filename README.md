@@ -37,3 +37,30 @@ Legacy Website
 ## Estado
 
 Proyecto en desarrollo.
+
+## Validation
+
+Version 0.3.0 introduces the first validation pipeline.
+
+The validation engine currently:
+
+- checks internal links against discovered routes;
+- resolves relative links from their source HTML file;
+- ignores external URLs and unsupported protocols;
+- deduplicates repeated issues by source file and normalized target;
+- returns structured `ValidationIssue` objects;
+- supports registering additional validators through the validation orchestrator.
+
+Current commands:
+
+```bash
+python3 -m migration.main discover \
+  --source /path/to/site \
+  --output /path/to/output
+
+python3 -m migration.main inventory \
+  --source /path/to/site \
+  --output /path/to/output
+```
+
+> The `validate` command will be exposed through the CLI in the next iteration.
