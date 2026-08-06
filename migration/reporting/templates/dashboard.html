@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+    <title>SiteForge Migration Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <header class="header">
+        <div>
+            <p class="eyebrow">Website migration report</p>
+            <h1>SiteForge Dashboard</h1>
+            <p class="subtitle">
+                Automated analysis and migration readiness report
+            </p>
+        </div>
+
+        <div class="header-meta">
+            <span>Generated</span>
+            <strong>${generated_at}</strong>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="summary-grid">
+            <article class="metric-card">
+                <span class="metric-label">Pages</span>
+                <strong class="metric-value">${total_pages}</strong>
+            </article>
+
+            <article class="metric-card">
+                <span class="metric-label">Files</span>
+                <strong class="metric-value">${total_files}</strong>
+            </article>
+
+            <article class="metric-card">
+                <span class="metric-label">Total size</span>
+                <strong class="metric-value">${total_size}</strong>
+            </article>
+
+            <article class="metric-card">
+                <span class="metric-label">Issues</span>
+                <strong class="metric-value">${total_issues}</strong>
+            </article>
+        </section>
+
+        <section class="panel-grid">
+            <article class="panel">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">Inventory</p>
+                        <h2>Files by category</h2>
+                    </div>
+                </div>
+
+                <div
+                    id="category-chart"
+                    class="chart"
+                    data-values='${files_by_category}'
+                ></div>
+            </article>
+
+            <article class="panel">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">Validation</p>
+                        <h2>Issues by severity</h2>
+                    </div>
+                </div>
+
+                <div
+                    id="severity-chart"
+                    class="chart"
+                    data-values='${issues_by_severity}'
+                ></div>
+            </article>
+        </section>
+
+        <section class="panel-grid">
+            <article class="panel">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">Validation</p>
+                        <h2>Issues by validator</h2>
+                    </div>
+                </div>
+
+                <div
+                    id="validator-chart"
+                    class="chart"
+                    data-values='${issues_by_validator}'
+                ></div>
+            </article>
+
+            <article class="panel">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">Migration</p>
+                        <h2>Migration status</h2>
+                    </div>
+                </div>
+
+                <div
+                    id="migration-chart"
+                    class="chart"
+                    data-values='${migration_status}'
+                ></div>
+            </article>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <div>
+                    <p class="eyebrow">Quality report</p>
+                    <h2>Validation issues</h2>
+                </div>
+
+                <input
+                    id="issue-search"
+                    class="search"
+                    type="search"
+                    placeholder="Search issues..."
+                >
+            </div>
+
+            <div class="table-wrapper">
+                <table id="issues-table">
+                    <thead>
+                        <tr>
+                            <th>Severity</th>
+                            <th>Validator</th>
+                            <th>Type</th>
+                            <th>Source</th>
+                            <th>Target</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${issues_rows}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <div>
+                    <p class="eyebrow">Generated outputs</p>
+                    <h2>Report files</h2>
+                </div>
+            </div>
+
+            <div class="report-links">
+                <a href="inventory.csv">Inventory CSV</a>
+                <a href="validation.csv">Validation CSV</a>
+                <a href="validation.md">Validation Markdown</a>
+                <a href="migration-map.csv">Migration map</a>
+                <a href="statistics.json">Statistics JSON</a>
+                <a href="sitemap.xml">Sitemap XML</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        Generated by website-migration-toolkit
+    </footer>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

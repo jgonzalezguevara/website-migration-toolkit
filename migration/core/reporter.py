@@ -6,6 +6,7 @@ from migration.models.inventory import InventoryItem
 from migration.models.mapping import MigrationMapItem
 from migration.models.validation import ValidationIssue
 from migration.reporting.csv import write_csv
+from migration.reporting.dashboard import write_dashboard
 from migration.reporting.json import write_json
 from migration.reporting.markdown import (
     write_validation_markdown,
@@ -127,4 +128,20 @@ class ReportManager:
             self.output_directory / filename,
             pages,
             base_url,
+        )
+
+    def dashboard(
+        self,
+        pages: Iterable[Page],
+        inventory: Iterable[InventoryItem],
+        issues: Iterable[ValidationIssue],
+        mapping: Iterable[MigrationMapItem],
+        filename: str = "dashboard.html",
+    ) -> Path:
+        return write_dashboard(
+            self.output_directory / filename,
+            pages,
+            inventory,
+            issues,
+            mapping,
         )

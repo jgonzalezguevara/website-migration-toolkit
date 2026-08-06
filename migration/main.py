@@ -229,6 +229,12 @@ def run_migrate(
         pages,
         args.url,
     )
+    reports.dashboard(
+        pages,
+        inventory,
+        issues,
+        mapping,
+    )
 
     print(f"Sitio: {args.url}")
     print(f"Páginas: {len(pages)}")
