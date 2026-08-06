@@ -225,6 +225,10 @@ def run_migrate(
         inventory,
         issues,
     )
+    reports.sitemap(
+        pages,
+        args.url,
+    )
 
     print(f"Sitio: {args.url}")
     print(f"Páginas: {len(pages)}")

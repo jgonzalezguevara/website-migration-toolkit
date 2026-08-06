@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any, Iterable
 
+from migration.models.discovery import Page
 from migration.models.inventory import InventoryItem
 from migration.models.mapping import MigrationMapItem
 from migration.models.validation import ValidationIssue
@@ -9,6 +10,7 @@ from migration.reporting.json import write_json
 from migration.reporting.markdown import (
     write_validation_markdown,
 )
+from migration.reporting.sitemap import write_sitemap
 from migration.reporting.statistics import (
     build_statistics,
 )
@@ -30,9 +32,7 @@ class ReportManager:
         filename: str,
         rows: Iterable[Any],
     ) -> Path:
-        destination = (
-            self.output_directory / filename
-        )
+        destination = self.output_directory / filename
 
         write_csv(
             destination,
@@ -46,9 +46,7 @@ class ReportManager:
         filename: str,
         data: Any,
     ) -> Path:
-        destination = (
-            self.output_directory / filename
-        )
+        destination = self.output_directory / filename
 
         write_json(
             destination,
@@ -81,8 +79,7 @@ class ReportManager:
         )
 
         markdown_path = (
-            self.output_directory
-            / markdown_filename
+            self.output_directory / markdown_filename
         )
 
         write_validation_markdown(
@@ -119,3 +116,15 @@ class ReportManager:
         )
 
         return data
+
+    def sitemap(
+        self,
+        pages: Iterable[Page],
+        base_url: str,
+        filename: str = "sitemap.xml",
+    ) -> Path:
+        return write_sitemap(
+            self.output_directory / filename,
+            pages,
+            base_url,
+        )
