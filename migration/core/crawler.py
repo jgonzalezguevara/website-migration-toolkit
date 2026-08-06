@@ -3,6 +3,12 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 
+WGET_ACCEPTED_RETURN_CODES = {
+    0,
+    8,
+}
+
+
 def crawl_site(
     url: str,
     output: Path,
@@ -15,7 +21,9 @@ def crawl_site(
         )
 
     if not parsed.netloc:
-        raise ValueError("La URL no contiene un dominio válido")
+        raise ValueError(
+            "La URL no contiene un dominio válido"
+        )
 
     output.mkdir(
         parents=True,
@@ -42,16 +50,16 @@ def crawl_site(
         check=False,
     )
 
-    if result.returncode != 0:
-        raise RuntimeError(
-            f"wget finalizó con código {result.returncode}"
-        )
-
     site_root = output / parsed.netloc
 
     if not site_root.exists():
         raise RuntimeError(
             f"No se encontró el sitio descargado: {site_root}"
+        )
+
+    if result.returncode not in WGET_ACCEPTED_RETURN_CODES:
+        raise RuntimeError(
+            f"wget finalizó con código {result.returncode}"
         )
 
     return site_root
