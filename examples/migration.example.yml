@@ -1,0 +1,17 @@
+project:
+  name: Example Website
+  output: ./output/example-website
+
+source:
+  url: https://example.com
+
+target:
+  framework: astro
+  base_url: https://new.example.com
+
+crawl:
+  enabled: true
+  robots: false
+
+redirects:
+  file: redirects.example.csv
