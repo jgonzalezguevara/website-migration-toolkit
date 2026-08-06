@@ -3,12 +3,15 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from migration.config import MigrationConfig
+from migration.core.compare import compare_inventories
 from migration.core.crawler import crawl_site
 from migration.core.discover import discover
 from migration.core.inventory import build_inventory
 from migration.core.mapping import build_migration_map
 from migration.core.reporter import ReportManager
 from migration.core.validate import run_validation
+from migration.parsers.inventory_csv import read_inventory_csv
+from migration.reporting.comparison import write_comparison_reports
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -114,6 +117,29 @@ def build_parser() -> argparse.ArgumentParser:
         "--redirects",
         type=Path,
         help="CSV con old_route y new_route.",
+    )
+
+    compare_parser = commands.add_parser(
+        "compare",
+        help="Compara dos inventarios de sitios web.",
+    )
+    compare_parser.add_argument(
+        "--old",
+        type=Path,
+        required=True,
+        help="Inventario CSV del sitio antiguo.",
+    )
+    compare_parser.add_argument(
+        "--new",
+        type=Path,
+        required=True,
+        help="Inventario CSV del sitio nuevo.",
+    )
+    compare_parser.add_argument(
+        "--output",
+        type=Path,
+        required=True,
+        help="Directorio de salida del comparador.",
     )
 
     migrate_parser = commands.add_parser(
@@ -341,6 +367,54 @@ def run_map(
     return 0
 
 
+def run_compare(
+    args: argparse.Namespace,
+) -> int:
+    old_inventory = read_inventory_csv(
+        args.old,
+    )
+
+    new_inventory = read_inventory_csv(
+        args.new,
+    )
+
+    items = compare_inventories(
+        old_inventory,
+        new_inventory,
+    )
+
+    reports = write_comparison_reports(
+        args.output,
+        items,
+    )
+
+    status_counts: dict[str, int] = {}
+
+    for item in items:
+        status_counts[item.status] = (
+            status_counts.get(item.status, 0) + 1
+        )
+
+    print(f"Elementos: {len(items)}")
+
+    for status in (
+        "added",
+        "removed",
+        "modified",
+        "unchanged",
+    ):
+        print(
+            f"{status.capitalize()}: "
+            f"{status_counts.get(status, 0)}"
+        )
+
+    print(f"CSV: {reports['csv']}")
+    print(f"JSON: {reports['json']}")
+    print(f"Markdown: {reports['markdown']}")
+
+    return 0
+
+
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
@@ -350,6 +424,9 @@ def main() -> int:
             parser,
             args,
         )
+
+    if args.command == "compare":
+        return run_compare(args)
 
     validate_source(
         parser,
